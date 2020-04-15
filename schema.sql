@@ -1,3 +1,7 @@
+CREATE SCHEMA db;
+
+use db;
+
 CREATE TABLE annuaire_sante (
     id_type varchar(255),
     id varchar(255),

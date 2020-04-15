@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Import data from https://annuaire.sante.fr/ to database",
   "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
   "repository": "https://github.com/emnbdx/annuaire-sante-as-api.git",
   "author": "Eddy <eddy.montus@gmail.com>",
   "license": "MIT",
@@ -12,7 +15,6 @@
     "mysql": "^2.18.1",
     "promise": "^8.1.0",
     "request": "^2.88.2",
-    "stream-transform": "^2.0.1",
     "yauzl": "^2.10.0"
   }
 }

@@ -16,7 +16,7 @@ app.post('/update', (_req, res) => {
     res.send('Update task launched, get status with GET /update-state endpoint');
 })
 
-app.get('/update-state', (_req, res) => {
+app.get('/update-status', (_req, res) => {
     res.json({status : importer.getStatus()});
 })
 

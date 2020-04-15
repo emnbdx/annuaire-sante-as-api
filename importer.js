@@ -20,7 +20,7 @@ const download = () => {
             url: config.annuaire_sante_url,
             method: 'GET',
             agentOptions: {
-                rejectUnauthorized: false
+                rejectUnauthorized: false // install certificate from http://igc-sante.esante.gouv.fr/PC/#ca to don't do that
             }
         })
         .pipe(fs.createWriteStream(outputFile))
