@@ -18,6 +18,8 @@ And finally run:
 
 `yarn dev`
 
+`config.js` contain all application configuration. You can override default config with environment variable take a look on this file to know
+
 ## How to use
 
 This application provide 3 endpoint (so sorry no swagger) :

@@ -11,10 +11,9 @@ var status = '';
 const download = () => {
     return new Promise((resolve, reject) => {
         status = 'downloading';
-        console.log('Create tmp folder');
-        fs.mkdirSync('tmp', { recursive: true });
-
         console.log('Download database');
+
+        fs.mkdirSync('tmp', { recursive: true });
         var outputFile = 'tmp/db.zip';
         request({
             url: config.annuaire_sante_url,
@@ -35,6 +34,7 @@ const unzip = (file) => {
     return new Promise((resolve, reject) => {
         status = 'unziping';
         console.log('Unzip database');
+
         var outputFile = 'tmp/db.txt';
         yauzl.open(file, {lazyEntries: true}, (err, zipfile) => {
             if (err) reject;
@@ -57,6 +57,17 @@ const unzip = (file) => {
     });
 }
 
+const countLines = function(filePath, callback) {
+    let i;
+    let count = 0;
+    fs.createReadStream(filePath)
+        .on('error', e => callback(e))
+        .on('data', chunk => {
+            for (i=0; i < chunk.length; ++i) if (chunk[i] == 10) count++;
+        })
+        .on('end', () => callback(null, count));
+};
+
 function parseAndInsert(csv) {
     status = 'inserting';
     console.log('Read csv ' + csv + ' and inject');
@@ -68,32 +79,46 @@ function parseAndInsert(csv) {
         relax: true
     });
 
-    fs.createReadStream(csv)
-        .on('error', console.log)
-        .pipe(parser)
-        .on('data', async (csvrow) => {
+    countLines(csv, (err, lineCount) => {
+        if(err) throw err;
 
-            csvData.push(csvrow.map(function (value, label) {
-                return value.replace(/\\xC2\\x92/g, '').replace(/""/g, '"');
-            }));
-            
-            if(csvData.length == 100) {
-                parser.pause();
+        fs.createReadStream(csv)
+            .on('error', console.log)
+            .pipe(parser)
+            .on('data', async (csvrow) => {
 
-                await db.insert([csvData]).catch(console.log);
-                csvData = [];
+                if(config.import_filter.length > 0 && !config.import_filter.includes(parseInt(csvrow[9]))) {
+                    return;
+                }
 
-                parser.resume();
-            }
-        })
-        .on('end', async () => {
-            
-            await db.insert([csvData]).catch(console.log);
-            csvData = [];
+                csvData.push(csvrow.map(function (value, label) {
+                    return value.replace(/\\xC2\\x92/g, '').replace(/""/g, '"');
+                }));
+                
+                if(csvData.length == 100) {
+                    parser.pause();
 
-            console.log('end');
-            status = 'finished';
-        });
+                    await db.insert([csvData]).catch(console.log);
+                    csvData = [];
+
+                    // update state
+                    const {lines} = parser.info;
+                    status = 'inserting ' + Math.round((lines * 100 / lineCount)) + '%';
+
+                    parser.resume();
+                }
+            })
+            .on('end', async () => {
+                
+                if(csvData.length > 0) {
+                    await db.insert([csvData]).catch(console.log);
+                    csvData = [];
+                }
+
+                status = 'finished';
+                console.log('Finished');
+            });
+    })    
 }
 
 module.exports = {
