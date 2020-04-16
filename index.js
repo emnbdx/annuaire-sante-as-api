@@ -13,7 +13,7 @@ app.get('/', async (req, res) => {
 app.post('/update', (_req, res) => {
     importer.launch();
 
-    res.send('Update task launched, get status with GET /update-state endpoint');
+    res.send('Update task launched, get status with GET /update-status endpoint');
 })
 
 app.get('/update-status', (_req, res) => {
