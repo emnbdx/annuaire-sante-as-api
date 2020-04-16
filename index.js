@@ -6,7 +6,7 @@ const importer = require('./importer');
 const app = express();
 
 app.get('/', async (req, res) => {
-    var resutl = await db.select(req.query.lastname).catch(console.log);
+    var resutl = await db.select(req.query).catch(console.log);
     res.json(resutl);
 })
 
