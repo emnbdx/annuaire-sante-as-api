@@ -87,10 +87,15 @@ function parseAndInsert(csv) {
             .pipe(parser)
             .on('data', async (csvrow) => {
 
+                // Filter on profession code
                 if(config.import_filter.length > 0 && !config.import_filter.includes(parseInt(csvrow[9]))) {
                     return;
                 }
 
+                // I don't know why but there is one extra column in file
+                csvrow.pop();
+
+                // Remove invalid char and parse error
                 csvData.push(csvrow.map(function (value, label) {
                     return value.replace(/\\xC2\\x92/g, '').replace(/""/g, '"');
                 }));
