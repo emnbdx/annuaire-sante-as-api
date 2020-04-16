@@ -23,6 +23,6 @@ And finally run:
 This application provide 3 endpoint (so sorry no swagger) :
 |METHOD|ENDPOINT|ACTION|
 |-|-|-|
-|GET |/|Can be used with lastname param to query data|
+|GET |/|Can be used with query param where param name is column name in db : ?lastname=doe&firstname=john|
 |POST| /update|Launch import of data|
 |GET |/update-status|Get import status|
