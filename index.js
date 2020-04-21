@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors')
 
 const config = require('./config');
 const db = require('./db');
 const importer = require('./importer');
 
 const app = express();
+app.use(cors())
 
 app.get('/', async (req, res) => {
     var resutl = await db.select(req.query).catch(console.log);
