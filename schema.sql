@@ -54,5 +54,6 @@ CREATE TABLE annuaire_sante (
     sector_code varchar(4),
     sector_label varchar(53),
     pharmacists_table_section_code varchar(2),
-    pharmacists_table_section_label varchar(240)
+    pharmacists_table_section_label varchar(240),
+    UNIQUE KEY unique_id (id_nat, technical_id, practice_mode_code, registration_authority)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
